@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Login</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+	</head>
+
+		<div class="login">
+			<h2>Login</h2>
+
+			<form class="login-child-form" action="{{ url_for('login') }}" method="post">
+				
+				<div class="login-child">
+					<input type="text" name="username" placeholder="Username" id="username" required>
+					<label for="username">Username:</label>
+				</div>
+
+				<div class="login-child">
+					<input type="password" name="password" placeholder="Password" id="password" required>
+					<label for="password">Password:</label>
+				</div>
+
+				<div class="msg">{{ msg }}</div>
+				<button class="button" type = "submit" value = "Submit" name="login-child-form">
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+					Submit
+				</button>
+			</form>
+
+			<div class="register-link">
+				<a href="{{ url_for('register') }}">Register</a>
+			</div>
+		</div>
+
+
+</html>

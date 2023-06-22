@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html> 
+        <head><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+        <body class="update-page">
+
+                <div class="old-data">
+                        <h2>Old Food Values</h2>
+                        <p>Food Name: {{ data[0][1] }}</p>
+                        <p>Calories: {{ data[0][2] }}</p>
+                        <p>Protein: {{ data[0][3] }}</p>
+                        <p>Fat: {{ data[0][4] }}</p>
+                        <p>Carbs: {{ data[0][5] }}</p>
+                </div>
+
+                <div class="update_food_form" id="update_food_form">
+                        <h2>New Food Values</h2>
+                
+                        <form id="update_food" action="/main" method="POST">
+                
+                            <div class="update_food_child">
+                        <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+                        <label for="name">Food Name:</label>
+                            </div>
+                
+                            <div class="update_food_child">
+                        <input type="text" class="form-control" id="calories" name="calories" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+                        <label for="calories">Calories:</label>
+                            </div>
+                
+                            <div class="update_food_child">
+                        <input type="text" class="form-control" id="protein" name="protein" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+                        <label for="protein">Protein:</label>        
+                            </div>
+                
+                            <div class="update_food_child">
+                        <input type="text" class="form-control" id="fat" name="fat" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+                        <label for="fat">Fat:</label>        
+                            </div>
+                
+                            <div class="update_food_child">
+                        <input type="text" class="form-control" id="carbs" name="carbs" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+                        <label for="carbs">Carbs:</label>        
+                            </div>
+
+                        <input type="hidden" id="food_calories_id" name="food_calories_id" value="{{ data[0][0] }}">
+                        
+                        <button class="button" type = "submit" value = "Submit" name="update_food">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            Submit
+                        </button>
+                        </form> 
+                </div>
+        </body>
+</html>

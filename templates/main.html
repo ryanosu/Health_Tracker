@@ -1,0 +1,251 @@
+{%  block content %}
+<html>
+    <head>
+        <div class="macronutrient-tracker-header">Macronutrient and Calorie Tracker</div>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+
+    <div class="input_food_form" id="input_food_form">
+        <h2>Manually Add Food</h2>
+
+        <form id="add_food" action="/main" method="POST">
+
+            <div class="input_food_child">
+        <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+        <label for="name">Food Name:</label>
+            </div>
+
+            <div class="input_food_child">
+        <input type="text" class="form-control" id="calories" name="calories" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+        <label for="calories">Calories:</label>
+            </div>
+
+            <div class="input_food_child">
+        <input type="text" class="form-control" id="protein" name="protein" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+        <label for="protein">Protein:</label>        
+            </div>
+
+            <div class="input_food_child">
+        <input type="text" class="form-control" id="fat" name="fat" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+        <label for="fat">Fat:</label>        
+            </div>
+
+            <div class="input_food_child">
+        <input type="text" class="form-control" id="carbs" name="carbs" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+        <label for="carbs">Carbs:</label>        
+            </div>
+        
+        <button class="button" type = "submit" value = "Submit" name="add_food">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Submit
+        </button>
+        </form> 
+    </div>
+    
+    <div class="api-query-parent">
+        <h2>Query USDA's API To Add Food</h2>
+
+        <form id="search_query" action="/main" method="POST">
+
+            <div class="api-query-child">
+        <input type="text" class="form-control" id="query_string" name="query_string" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+        <label for="query_string">Food Name:</label>
+            </div>
+        
+        <button class="button" type = "submit" value = "Submit" name="search_query">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Submit
+        </button>
+        </form>
+    </div>
+
+    <div class="change-cal-goal-parent">
+        <h2>Change Today's Calorie Goal</h2>
+
+        <form id="change-cal-goal" action="/main" method="POST">
+
+            <div class="change-cal-goal-child">
+                <input type="text" class="form-control" id="change_cal_goal_new" name="change_cal_goal_new" pattern="[A-Za-z0-9]{1,}" placeholder="" required>
+                <label for="change_cal_goal_new">New Calorie Goal:</label>
+            </div>
+
+        <button class="button" type = "submit" value = "Submit" name="change-cal-goal">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Submit
+        </button>
+
+        </form>
+    </div>
+
+    <div class="delete-table-parent">
+        <h2>Delete Table</h2>
+
+        <form id="delete-table" action="/delete_table">
+            
+        <button class="button" type = "submit" value = "Submit" name="delete-table" action="/delete_table">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Submit
+        </button>
+        </form>
+    </div>
+
+            <!-- Javascript Bar Graph Section Begins --> 
+            <div class="barGraph-h2">
+                <h2>Today's Calorie Goal: {{ goal_cal }}</h2>
+            </div>
+            <div>
+                <canvas id="barGraph" class="barGraph"></canvas>
+            </div>
+
+            <script>
+                const foo = document.getElementById('barGraph');
+                const todayGoal = {{ goal_cal | tojson }}
+                const todayCalTotal = {{ total_amount | tojson }}
+                const dataSetup = {
+                    labels: ['Calories'],
+                    datasets: [{
+                        data: [todayCalTotal],
+                        backgroundColor: [
+                        'rgb(238, 75, 43)'
+                        ],
+                        borderWidth: 1
+                    }]
+                }
+
+                new Chart(foo, {
+                    type: 'bar',
+                    data: dataSetup,
+                    options: {
+                        responsive: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                max: todayGoal,
+                                ticks:{
+                                    color:'white',
+                                    font: {
+                                        size: 20
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks:{
+                                    color:'white',
+                                    font: {
+                                        size: 20
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                })
+
+            </script>
+            <!-- Javascript Bar Graph Section Ends -->
+
+
+            <!-- Javascript Pie Graph Section Begins --> 
+            <div class="myChart-h2">
+                <h2>Today's Macronutrient Breakdown</h2>
+            </div>
+            <div>
+                <canvas id="myChart" class="myChart"></canvas>
+            </div>
+              
+              <script>
+                const ctx = document.getElementById('myChart');
+                const protein_js = {{ total_amount_protein | tojson }}
+                const fat_js = {{ total_amount_fat | tojson }}
+                const carbs_js = {{ total_amount_carbs | tojson }}
+
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Protein', 'Fat', 'Carbs'],
+                        datasets: [{
+                            label: '# of Grams',
+                            data: [protein_js, fat_js, carbs_js],
+                            borderWidth: 1
+                                }]
+                        },
+                    options: {
+                        responsive: false,
+                        scales: {
+                            y: {
+                                display: false          
+                                },
+                            x: {
+                                display: false 
+                            }
+                            },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    // This more specific font property overrides the global property
+                                    font: {
+                                        size: 20
+                                    },
+                                    color: 'white'
+                                }
+                            }
+                        }
+                }});
+              </script>
+            <!-- Javascript Pie Graph Section Ends --> 
+
+    <div class="food_table">
+        <table class="table">
+            <h2 class="caption">Today's List of Foods</h2> 
+
+            <!-- data tuple from app.py --> 
+            {% if data %}
+            <thead>
+            <tr>  
+            <!-- Create headers row -->
+            <th class="cell" scope="col" data-field="name" data-filter-control="input">Name</th>
+            <th class="cell" scope="col" data-field="calories" data-filter-control="input">Calories</th>
+            <th class="cell" scope="col" data-field="protein" data-filter-control="input">Protein</th>
+            <th class="cell" scope="col" data-field="fat" data-filter-control="input">Fat</th>
+            <th class="cell" scope="col" data-field="carbs" data-filter-control="input">Carbs</th>
+            </tr>
+            <tbody>
+        
+            {% for item in data %}
+            <tr class="cell">
+            {% for key in item[1:] %}
+            <td class="cell"> {{key}} </td>
+            {% endfor %}
+
+            <!-- Create our delete buttons -->
+            <td ><a href="delete_row/{{item[0]}}" style="color:white" class="btn btn-default">Delete</a></td>
+            <td ><a href="update_page/{{item[0]}}" style="color:white" class="btn btn-default">Update</a></td>
+
+            </tr> 
+            {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+
+</html>
+{%  endblock %}
