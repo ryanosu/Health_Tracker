@@ -2,6 +2,9 @@
 
 ![chrome_N1KGkPsQuy](https://github.com/ryanosu/CS361/assets/86269596/98a58109-d538-4bd2-929d-851758a2f0bc)
 
+![login-page](https://github.com/ryanosu/Health_Tracker/assets/86269596/5126dc7b-22c4-46f8-90c9-c504493b5095)
+
+
 Create an account with a username, password, and email. Then login.
 
 ![main-page](https://github.com/ryanosu/Health_Tracker/assets/86269596/c51d6c4f-9032-4609-91ec-22970b5636a5)
