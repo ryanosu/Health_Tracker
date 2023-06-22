@@ -1,13 +1,12 @@
 <h1>Welcome to the Health Tracker web app!</h1>
 
-![chrome_N1KGkPsQuy](https://github.com/ryanosu/CS361/assets/86269596/98a58109-d538-4bd2-929d-851758a2f0bc)
-
 ![login-page](https://github.com/ryanosu/Health_Tracker/assets/86269596/5126dc7b-22c4-46f8-90c9-c504493b5095)
 
 
 Create an account with a username, password, and email. Then login.
 
-![main-page](https://github.com/ryanosu/Health_Tracker/assets/86269596/c51d6c4f-9032-4609-91ec-22970b5636a5)
+![main-page](https://github.com/ryanosu/Health_Tracker/assets/86269596/fa3eda2e-40f1-4963-b2ec-ab8a6c333fc9)
+
 
 Create, Edit, and Update foods or your calorie goal. <br><br> Note: currently, querying the USDA API currently takes 30-45 seconds for it to respond. To use it, you must sign up for an api key at https://fdc.nal.usda.gov/api-key-signup.html
 
