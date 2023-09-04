@@ -9,9 +9,9 @@ import time
 from dotenv import load_dotenv
 
 #load_dotenv()
-app = Flask(__name__)
-Bootstrap(app)
-mysql = MySQL(app)
+application = Flask(__name__)
+Bootstrap(application)
+mysql = MySQL(application)
 
 # database connection info
 # app.config["MYSQL_HOST"] = os.getenv('app.config["MYSQL_HOST"]')
@@ -36,7 +36,7 @@ mysql = MySQL(app)
 #                                                                               #
 ################################################################################# 
 
-@app.route('/main', methods = ['POST', 'GET'])
+@application.route('/main', methods = ['POST', 'GET'])
 def main():
     if 'loggedin' not in session:
         return render_template("login.html")
@@ -210,7 +210,7 @@ def main():
             return redirect("/main")
 
 # deletes all food and calories information (not actual back end table)
-@app.route("/delete_table")
+@application.route("/delete_table")
 def delete_table():
     query = "DELETE FROM food_calories;"
     cur = mysql.connection.cursor()
@@ -219,7 +219,7 @@ def delete_table():
     return redirect("/main")
 
 # delete a single row in the table (name of food, calories)
-@app.route("/delete_row/<row_to_delete>")
+@application.route("/delete_row/<row_to_delete>")
 def delete_row(row_to_delete):
     query = f"DELETE FROM food_calories WHERE food_calories_id={row_to_delete}"
     cur = mysql.connection.cursor()
@@ -228,7 +228,7 @@ def delete_row(row_to_delete):
     return redirect("/main")
 
 # update variables on separate page
-@app.route("/update_page/<row_to_update>")
+@application.route("/update_page/<row_to_update>")
 def update_page(row_to_update):
     query = f"SELECT * FROM food_calories WHERE food_calories_id={row_to_update};"
     cursor = mysql.connection.cursor()
@@ -243,7 +243,7 @@ def update_page(row_to_update):
 ################################################################################# 
 
 # non-functional requirement/server response speed test
-@app.route("/time")
+@application.route("/time")
 def time_test():
     total_seconds = 0
     for i in range(10):
@@ -258,8 +258,8 @@ def time_test():
 #                                                                               #
 ################################################################################# 
 
-@app.route('/')
-@app.route("/login", methods=["GET", "POST"])
+@application.route('/')
+@application.route("/login", methods=["GET", "POST"])
 def login():
     if 'loggedin' in session:
         return redirect("/main")
@@ -283,14 +283,14 @@ def login():
             msg = 'Incorrect username/password!'
     return render_template("login.html", msg=msg)
 
-@app.route('/logout')
+@application.route('/logout')
 def logout():
    session.pop('loggedin', None)
    session.pop('id', None)
    session.pop('username', None)
    return redirect(url_for('login'))
 
-@app.route('/register', methods=['GET', 'POST'])
+@application.route('/register', methods=['GET', 'POST'])
 def register():
     msg = ''
     # Check if user submitted form
@@ -320,7 +320,7 @@ def register():
         msg = 'Please fill out the form!'
     return render_template('register.html', msg=msg)
 
-@app.route('/profile')
+@application.route('/profile')
 def profile():
     if 'loggedin' in session:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -332,5 +332,5 @@ def profile():
 if __name__ == "__main__":
     # port = int(os.environ.get('PORT', 13132))
     # app.run(port=port, debug=True)
-    app.debug = True
-    app.run()
+    application.debug = True
+    application.run()
