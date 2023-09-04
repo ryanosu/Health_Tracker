@@ -8,21 +8,21 @@ import json
 import time
 from dotenv import load_dotenv
 
-load_dotenv()
+#load_dotenv()
 app = Flask(__name__)
 Bootstrap(app)
 mysql = MySQL(app)
 
 # database connection info
-app.config["MYSQL_HOST"] = os.getenv('app.config["MYSQL_HOST"]')
-app.config["MYSQL_USER"] = os.getenv('app.config["MYSQL_USER"]')
-app.config["MYSQL_PASSWORD"] = os.getenv('app.config["MYSQL_PASSWORD"]')
-app.config["MYSQL_DB"] = os.getenv('app.config["MYSQL_DB"]')
-app.secret_key = os.getenv('app.secret_key')
-app.config["SESSION_TYPE"] = os.getenv('app.config["SESSION_TYPE"]')
+# app.config["MYSQL_HOST"] = os.getenv('app.config["MYSQL_HOST"]')
+# app.config["MYSQL_USER"] = os.getenv('app.config["MYSQL_USER"]')
+# app.config["MYSQL_PASSWORD"] = os.getenv('app.config["MYSQL_PASSWORD"]')
+# app.config["MYSQL_DB"] = os.getenv('app.config["MYSQL_DB"]')
+# app.secret_key = os.getenv('app.secret_key')
+# app.config["SESSION_TYPE"] = os.getenv('app.config["SESSION_TYPE"]')
 
 # Nutrition API client key
-nutrition_api_client_primary_key = os.getenv('nutrition_api_client_primary_key')
+# nutrition_api_client_primary_key = os.getenv('nutrition_api_client_primary_key')
 
 #################################################################################
 #                                                                               #
@@ -330,5 +330,7 @@ def profile():
     return redirect(url_for('login'))
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 13132))
-    app.run(port=port, debug=True)
+    # port = int(os.environ.get('PORT', 13132))
+    # app.run(port=port, debug=True)
+    app.debug = True
+    app.run()
