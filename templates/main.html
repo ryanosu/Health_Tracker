@@ -112,8 +112,8 @@
 
             <script>
                 const foo = document.getElementById('barGraph');
-                const todayGoal = {{ goal_cal | tojson }}
-                const todayCalTotal = {{ total_amount | tojson }}
+                const todayGoal = {{ goal_cal }}
+                const todayCalTotal = {{ total_amount }}
                 const dataSetup = {
                     labels: ['Calories'],
                     datasets: [{

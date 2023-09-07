@@ -1,17 +1,37 @@
 from flask import Flask, render_template, redirect, url_for, request, session
-from flask_mysqldb import MySQL
-import MySQLdb.cursors, re, os, timeit
+#from flask_mysqldb import MySQL
+#import MySQLdb.cursors
+import re
+import os
+import timeit
 from flask_bootstrap import Bootstrap
 import requests
-import http.client, urllib.request, urllib.parse, urllib.error, base64
-import json
-import time
+import urllib.request
+import urllib.parse
+import urllib.error
 from dotenv import load_dotenv
+import pymysql
+import pymysql.cursors
+#from flask_session.__init__ import Session
 
-#load_dotenv()
+load_dotenv()
 application = Flask(__name__)
 Bootstrap(application)
-mysql = MySQL(application)
+#mysql = MySQL(application)
+
+host = os.environ['RDS_HOSTNAME']
+user = os.environ['RDS_USERNAME']
+password = os.environ['RDS_PASSWORD']
+database = os.getenv('dbName')
+port = 3306
+
+connection = pymysql.connect(
+    host = host,
+    user = user,
+    password = password,
+    database = database,
+    port = port)
+    #cursorclass=pymysql.cursors.DictCursor)
 
 # database connection info
 # app.config["MYSQL_HOST"] = os.getenv('app.config["MYSQL_HOST"]')
@@ -21,8 +41,12 @@ mysql = MySQL(application)
 # app.secret_key = os.getenv('app.secret_key')
 # app.config["SESSION_TYPE"] = os.getenv('app.config["SESSION_TYPE"]')
 
+application.secret_key = os.getenv('secret_key')
+application.config["SESSION_TYPE"] = os.getenv('session_type')
+#Session(application)
+
 # Nutrition API client key
-# nutrition_api_client_primary_key = os.getenv('nutrition_api_client_primary_key')
+nutrition_api_client_primary_key = os.getenv('nutrition_api_client_primary_key')
 
 #################################################################################
 #                                                                               #
@@ -44,7 +68,8 @@ def main():
     # read data
     def helper_func_read():
         query = f"SELECT * FROM food_calories WHERE users_id={session['id']};"
-        cursor = mysql.connection.cursor()
+        #cursor = mysql.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute(query)
         data = cursor.fetchall()
         new_data = []
@@ -57,7 +82,8 @@ def main():
     # sum calories column
     def helper_func_sum():
         total_query = f"SELECT SUM(calories) FROM food_calories WHERE users_id={session['id']};"
-        cursor = mysql.connection.cursor()
+        #cursor = mysql.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute(total_query)
         total_amount = cursor.fetchone()
         total_amount = int(total_amount[0] or 0)
@@ -66,7 +92,8 @@ def main():
     # sum protein column
     def helper_func_sum_protein():
         total_query = f"SELECT SUM(protein) FROM food_calories WHERE users_id={session['id']};"
-        cursor = mysql.connection.cursor()
+        #cursor = mysql.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute(total_query)
         total_amount_protein = cursor.fetchone()
         total_amount_protein = int(total_amount_protein[0] or 0)
@@ -75,7 +102,8 @@ def main():
     # sum fat column
     def helper_func_sum_fat():
         total_query = f"SELECT SUM(fat) FROM food_calories WHERE users_id={session['id']};"
-        cursor = mysql.connection.cursor()
+        #cursor = mysql.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute(total_query)
         total_amount_fat = cursor.fetchone()
         total_amount_fat = int(total_amount_fat[0] or 0)
@@ -84,7 +112,8 @@ def main():
     # sum carbs column
     def helper_func_sum_carbs():
         total_query = f"SELECT SUM(carbs) FROM food_calories WHERE users_id={session['id']};"
-        cursor = mysql.connection.cursor()
+        #cursor = mysql.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute(total_query)
         total_amount_carbs = cursor.fetchone()
         total_amount_carbs = int(total_amount_carbs[0] or 0)
@@ -93,21 +122,26 @@ def main():
     # create data
     def helper_func_create(name, calories, protein, fat, carbs):
         query = f"INSERT INTO food_calories (name, calories, protein, fat, carbs, users_id) VALUES ('{name}', '{calories}', '{protein}', '{fat}', '{carbs}','{session['id']}')"
-        cursor = mysql.connection.cursor()
+        #cursor = mysql.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute(query)
-        mysql.connection.commit()
+        #mysql.connection.commit()
+        connection.commit()
     
     # update data
     def helper_func_update(name, calories, protein, fat, carbs, food_calories_id):
         update_query = f"UPDATE food_calories SET name='{name}', calories='{calories}', protein='{protein}', fat='{fat}', carbs='{carbs}' WHERE `food_calories_id`='{food_calories_id}';"
-        cursor = mysql.connection.cursor()
+        #cursor = mysql.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute(update_query)
-        mysql.connection.commit()
+        #mysql.connection.commit()
+        connection.commit()
 
     # get goal_cal
     def helper_func_goal_cal():
         query = f"SELECT goal_cal FROM users WHERE users_id={session['id']};"
-        cursor = mysql.connection.cursor()
+        #cursor = mysql.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute(query)
         goal_cal = cursor.fetchall()
         return goal_cal
@@ -115,9 +149,11 @@ def main():
     # change goal_cal
     def helper_func_goal_cal_change(new_goal_cal):
         query = f"UPDATE users SET goal_cal = '{new_goal_cal}' WHERE users_id={session['id']};"
-        cursor = mysql.connection.cursor()
+        #cursor = mysql.connection.cursor()
+        cursor = connection.cursor()
         cursor.execute(query)
-        mysql.connection.commit()
+        #mysql.connection.commit()
+        connection.commit()
     
     # query the USDA API
     def helper_nutrition_api(search):
@@ -213,25 +249,30 @@ def main():
 @application.route("/delete_table")
 def delete_table():
     query = "DELETE FROM food_calories;"
-    cur = mysql.connection.cursor()
+    #cur = mysql.connection.cursor()
+    cur = connection.cursor()
     cur.execute(query)
-    mysql.connection.commit()
+    #mysql.connection.commit()
+    connection.commit()
     return redirect("/main")
 
 # delete a single row in the table (name of food, calories)
 @application.route("/delete_row/<row_to_delete>")
 def delete_row(row_to_delete):
     query = f"DELETE FROM food_calories WHERE food_calories_id={row_to_delete}"
-    cur = mysql.connection.cursor()
+    #cur = mysql.connection.cursor()
+    cur = connection.cursor()
     cur.execute(query)
-    mysql.connection.commit()
+    #mysql.connection.commit()
+    connection.commit()
     return redirect("/main")
 
 # update variables on separate page
 @application.route("/update_page/<row_to_update>")
 def update_page(row_to_update):
     query = f"SELECT * FROM food_calories WHERE food_calories_id={row_to_update};"
-    cursor = mysql.connection.cursor()
+    #cursor = mysql.connection.cursor()
+    cursor = connection.cursor()
     cursor.execute(query)
     data = cursor.fetchall()
     return render_template("/update_page.html", data=data)
@@ -268,7 +309,8 @@ def login():
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         username = request.form['username']
         password = request.form['password']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        #cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
         cursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password,))
         account = cursor.fetchone()
         # If account exists in users table
@@ -298,7 +340,8 @@ def register():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        #cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
         cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
         account = cursor.fetchone()
         # validation checks
@@ -312,8 +355,10 @@ def register():
             msg = 'Please fill out the form!'
         else:
             # Account does not exists and form data is valid
+            cursor = connection.cursor()
             cursor.execute('INSERT INTO users VALUES (NULL, %s, %s, %s, %s)', (username, password, email, 2500))
-            mysql.connection.commit()
+            #mysql.connection.commit()
+            connection.commit()
             msg = 'You have successfully registered!'
     # form empty
     elif request.method == 'POST':
@@ -323,7 +368,8 @@ def register():
 @application.route('/profile')
 def profile():
     if 'loggedin' in session:
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        #cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = connection.cursor(pymysql.cursors.DictCursor)
         cursor.execute('SELECT * FROM users WHERE users_id = %s', (session['id'],))
         account = cursor.fetchone()
         return render_template('profile.html', account=account)
