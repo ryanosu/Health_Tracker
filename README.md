@@ -30,5 +30,5 @@ git clone https://github.com/ryanosu/Health_Tracker.git
 <h2>Or view mine live on AWS:</h2>
 
 ```sh
-http://health-tracker-next.us-east-2.elasticbeanstalk.com/
+http://health-tracker.us-east-2.elasticbeanstalk.com
 ```
